@@ -48,9 +48,7 @@ h1{font-size:30px;line-height:1.1}h2{font-size:22px}h3{font-size:18px;line-heigh
 input{width:100%;padding:15px 16px;border:2px solid var(--card2);border-radius:14px;background:var(--card);color:var(--text);font:600 16px Poppins,sans-serif;outline:none}
 input:focus{border-color:var(--violet)}
 /* home */
-.pop{background:var(--card);border-radius:22px;padding:18px;margin-top:14px;animation:up .45s both}
 .pop:nth-child(2){animation-delay:.12s}.pop:nth-child(3){animation-delay:.24s}
-.pop.out{opacity:0;transform:scale(.92);transition:.25s}
 @keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .who{display:flex;align-items:center;gap:6px;font:800 11px Poppins,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--violet);margin-bottom:6px}
 .who svg{width:15px;height:15px}
@@ -113,7 +111,6 @@ input:focus{box-shadow:0 0 0 3px var(--violet)}
 .callout b{font:800 15px Poppins,sans-serif}
 .meter{height:10px;background:rgba(255,255,255,.28);border-radius:99px;margin-top:10px;overflow:hidden}
 .meter i{display:block;height:100%;background:#fff;border-radius:99px;transition:width .6s}
-.steps{display:flex;flex-direction:column;gap:12px;margin:22px 0}
 .step{display:flex;gap:14px;align-items:center;background:var(--card);border-radius:18px;padding:14px;animation:up .5s both}
 .step:nth-child(2){animation-delay:.12s}.step:nth-child(3){animation-delay:.24s}
 .step i{width:34px;height:34px;border-radius:50%;background:var(--violet);color:#fff;display:grid;place-items:center;font:800 16px Poppins,sans-serif;font-style:normal;flex:none}
@@ -173,10 +170,6 @@ body.hasplayer #pops{bottom:calc(152px + env(safe-area-inset-bottom,0px))}
 .matchsb svg{position:absolute;inset:0;width:100%;height:100%;animation:spin 14s linear infinite}
 .matchsb b{position:relative;font:800 50px Poppins,sans-serif;color:#fff;line-height:1}
 .matchsb small{position:relative;font:800 12px Poppins,sans-serif;letter-spacing:.15em;text-transform:uppercase;color:#f1dcff;margin-top:4px}
-#ytwrap{display:none;position:fixed;z-index:16;border-radius:16px;overflow:hidden;background:#000;box-shadow:0 12px 30px rgba(11,11,16,.4)}
-#ytwrap iframe{width:100%;height:100%;border:0;display:block}
-#ytwrap.now{display:block;top:calc(66px + env(safe-area-inset-top,0px));left:50%;transform:translateX(-50%);width:min(360px,calc(100vw - 36px));height:202px}
-#ytwrap.tile{display:block;top:calc(10px + env(safe-area-inset-top,0px));right:10px;width:200px;height:202px}
 /* chat and now playing */
 .nart img,.nart .art{width:96px;height:96px;border-radius:24px;box-shadow:0 16px 36px rgba(90,18,160,.22)}
 .lyr{-webkit-mask-image:linear-gradient(transparent 0,#000 18%,#000 82%,transparent 100%);mask-image:linear-gradient(transparent 0,#000 18%,#000 82%,transparent 100%)}
@@ -227,7 +220,7 @@ body.inchat #pops{display:none}
 </style>
 </head>
 <body>
-<div id="app"><div id="main"></div><div id="player"></div><nav id="nav"></nav></div><div id="now"></div><div id="pops"></div><div id="sheetwrap"></div><div id="ytwrap"><div id="yt"></div></div>
+<div id="app"><div id="main"></div><div id="player"></div><nav id="nav"></nav></div><div id="now"></div><div id="pops"></div><div id="sheetwrap"></div>
 <script src="config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <script>
@@ -294,7 +287,7 @@ getTracks(ui.lang,ui.mood,ui.q).then(function(l){if(t!==tok)return;ui.list=l;ui.
 .catch(function(){if(t!==tok)return;ui.loading=false;ui.list=[];ui.err="can’t reach the music service. check your internet and try again.";drawScreen()})}
 /* ---------- screens ---------- */
 function rows(list){ui.view=list;return '<div class="list">'+list.map(function(t,i){var on=isLiked(t);
-return '<div class="row'+(cur&&cur.id===t.id?' now':'')+'" data-i="'+i+'" style="--n:'+i+'">'+artHTML(t)+'<div class="meta"><b>'+esc(t.title)+'</b><span>'+esc(t.artist)+(t.yt?' · full song':'')+'</span></div><button class="ib'+(on?' on':'')+'" data-heart="'+i+'" aria-label="like">'+(on?IC.heartF:IC.heart)+'</button></div>'}).join("")+'</div>'}
+return '<div class="row'+(cur&&cur.id===t.id?' now':'')+'" data-i="'+i+'" style="--n:'+i+'">'+artHTML(t)+'<div class="meta"><b>'+esc(t.title)+'</b><span>'+esc(t.artist)+'</span></div><button class="ib'+(on?' on':'')+'" data-heart="'+i+'" aria-label="like">'+(on?IC.heartF:IC.heart)+'</button></div>'}).join("")+'</div>'}
 function burstPts(){var p=[],n=16;for(var i=0;i<n*2;i++){var r=i%2?62:98,a=Math.PI*i/n;p.push((100+r*Math.cos(a)).toFixed(1)+","+(100+r*Math.sin(a)).toFixed(1))}return '<polygon fill="#F5EEFF" points="'+p.join(" ")+'"/>'}
 function nameScreen(){clearPops();nav.innerHTML="";
 main.innerHTML='<div class="screen">'+mark("mark")+'<h1 style="margin-top:22px">what should<br>anu call you?</h1><div class="sticker v">no sign-up. no stress.</div><p class="sub">just a nickname. that’s all anu needs.</p><div style="height:14px"></div><input id="n" maxlength="20" placeholder="nickname" autocomplete="off"><button class="btn full" id="ok" style="margin-top:14px" disabled>Continue</button><button class="link" id="bk">← back</button></div>';
@@ -306,7 +299,7 @@ function songs(){
 var h='<div class="screen"><h1>songs</h1><div class="sticker">pick a vibe, hit play</div><div style="height:14px"></div><input id="q" placeholder="search songs or artists" value="'+esc(ui.q)+'"><div style="height:12px"></div>'+
 '<div class="chips">'+LANGS.map(function(l){return '<button class="chip'+(ui.lang===l?' on':'')+'" data-lang="'+l+'">'+l+'</button>'}).join("")+'</div>'+
 '<div class="chips">'+MOODS.map(function(m){return '<button class="chip'+(ui.mood===m?' on':'')+'" data-mood="'+m+'">'+face(m)+m+'</button>'}).join("")+'</div>';
-var all=curated().concat(ui.list);
+var all=ui.list;
 if(all.length)h+=rows(all)+(ui.loading?'<p class="msg">loading more…</p>':'');
 else if(ui.loading)h+=skel();
 else if(ui.err)h+='<p class="msg">'+esc(ui.err)+'</p>';
@@ -356,7 +349,7 @@ var body;
 if(lyr.status==="ok")body='<div class="lyr" id="lyr">'+lyr.lines.map(function(l,i){return '<div class="ln" data-line="'+i+'">'+esc(l.s)+'</div>'}).join("")+'</div>';
 else if(lyr.status==="plain")body='<div class="lyr plain" id="lyr">'+lyr.plain.map(function(l){return '<div class="ln">'+esc(l)+'</div>'}).join("")+'</div>';
 else body='<div class="lyr"><p class="msg">'+({loading:"anu is finding the lyrics…",none:"no lyrics found for this one. try another song.",err:"can’t reach the lyrics service. check your internet."}[lyr.status]||"")+'</p></div>';
-el.innerHTML='<div class="nowp"><div class="nhead"><button class="ib" data-close aria-label="close">'+IC.down+'</button><span class="sticker v" style="margin:0">live lyrics</span><span style="width:38px"></span></div><div class="nart"'+(cur.yt?' style="flex-wrap:wrap;gap:6px"':'')+'>'+(cur.yt?'<div style="width:100%;height:208px"></div>':artHTML(cur))+'<div class="meta"><h3>'+esc(cur.title)+'</h3><span class="muted">'+esc(cur.artist)+'</span></div></div>'+body+'<div class="prog" data-seek><div id="pg2" style="width:'+pgw()+'%"></div></div><div class="times"><span id="tc">0:00</span><span id="td">0:00</span></div><div class="ctrl"><button class="ib'+(isLiked(cur)?' on':'')+'" data-heart-cur>'+(isLiked(cur)?IC.heartF:IC.heart)+'</button><button class="ib" data-prev>'+IC.prev+'</button><button class="pbtn" data-toggle>'+(isPaused()?IC.play:IC.pause)+'</button><button class="ib" data-next>'+IC.next+'</button><span style="width:38px"></span></div></div>';
+el.innerHTML='<div class="nowp"><div class="nhead"><button class="ib" data-close aria-label="close">'+IC.down+'</button><span class="sticker v" style="margin:0">lyrics</span><span style="width:38px"></span></div><div class="nart"'+(cur.yt?' style="flex-wrap:wrap;gap:6px"':'')+'>'+(cur.yt?'<div style="width:100%;height:208px"></div>':artHTML(cur))+'<div class="meta"><h3>'+esc(cur.title)+'</h3><span class="muted">'+esc(cur.artist)+'</span></div></div>'+body+'<div class="prog" data-seek><div id="pg2" style="width:'+pgw()+'%"></div></div><div class="times"><span id="tc">0:00</span><span id="td">0:00</span></div><div class="ctrl"><button class="ib'+(isLiked(cur)?' on':'')+'" data-heart-cur>'+(isLiked(cur)?IC.heartF:IC.heart)+'</button><button class="ib" data-prev>'+IC.prev+'</button><button class="pbtn" data-toggle>'+(isPaused()?IC.play:IC.pause)+'</button><button class="ib" data-next>'+IC.next+'</button><span style="width:38px"></span></div></div>';
 lyr.k=-2;updateLyr(true)}
 function enterApp(){ui.tab="home";drawScreen();drawNav();startPops()}
 var popT=null,popItems=[],popShown=0,popOn=false;
@@ -379,22 +372,7 @@ function answer(i,btn){if(G.lock)return;G.lock=1;var q=Q[G.i],ok=q[1][i]===q[2];
 function result(){var pc=Math.min(100,40+G.hit*12),msg=pc>=88?"we’re literally the same person":pc>=64?"kinda a match, not gonna lie":"opposites attract. still cute.";
 if(!load("anu_match",null))addPts(5);save("anu_match",pc);
 main.innerHTML='<div class="screen" style="text-align:center;padding-top:50px"><div class="matchsb">'+sbSvg(14,98,76,"#A617FF")+'<b>'+pc+'%</b><small>match</small></div><h1 style="margin-top:26px">'+msg+'</h1><p class="sub">you and anu said the same thing on '+G.hit+' of '+Q.length+'. '+(G.hit?"no cap, anu is into it.":"anu likes a challenge.")+'</p><button class="btn full" data-done style="margin-top:26px">'+(G.first?"Meet anu":"Back home")+'</button></div>'}
-var YTP=null,ytReady=false,ytPend=null;
-function setWrap(){var w=document.getElementById("ytwrap");if(w)w.className=cur&&cur.yt?(ui.nowOpen?"now":"tile"):""}
-function ytState(){try{return YTP&&YTP.getPlayerState?YTP.getPlayerState():-1}catch(e){return -1}}
-function isPaused(){if(cur&&cur.yt){var st=ytState();return st!==1&&st!==3}return audio.paused}
-function curTime(){if(cur&&cur.yt){try{return YTP&&YTP.getCurrentTime?YTP.getCurrentTime():0}catch(e){return 0}}return audio.currentTime}
-function curDur(){if(cur&&cur.yt){try{return YTP&&YTP.getDuration?YTP.getDuration():0}catch(e){return 0}}return audio.duration}
-function loadYT(){if(document.getElementById("ytapi"))return;var sc=document.createElement("script");sc.id="ytapi";sc.src="https://www.youtube.com/iframe_api";sc.onerror=function(){toast("OOPS","couldn’t load the YouTube player")};document.head.appendChild(sc)}
-window.onYouTubeIframeAPIReady=function(){ytReady=true;if(ytPend){var t=ytPend;ytPend=null;ytMake(t)}};
-function ytMake(t){if(YTP&&YTP.loadVideoById)return YTP.loadVideoById(t.yt);
-YTP=new YT.Player("yt",{width:"100%",height:"100%",videoId:t.yt,playerVars:{autoplay:1,controls:0,playsinline:1,rel:0,modestbranding:1,iv_load_policy:3},events:{onReady:function(e){e.target.playVideo()},onStateChange:function(e){if(e.data===0)step(1);else if(e.data===1||e.data===2)drawPlayer()},onError:function(){toast("OOPS","this video can’t play. skipping");step(1)}}})}
-function ytStart(t){if(ytReady||(window.YT&&YT.Player)){ytReady=true;ytMake(t)}else{ytPend=t;loadYT()}}
-function engineStart(){audio.pause();if(cur.yt){setWrap();ytStart(cur)}else{if(YTP&&YTP.stopVideo){try{YTP.stopVideo()}catch(e){}}setWrap();audio.src=cur.src;audio.play().catch(function(){})}}
 setInterval(function(){if(!cur)return;["pg","pg2"].forEach(function(id){var b=document.getElementById(id);if(b&&curDur())b.style.width=pgw()+"%"});updateLyr()},300);
-var CUR=[];
-fetch("songs.json").then(function(r){return r.ok?r.json():[]}).then(function(a){CUR=(a||[]).map(function(x){return{id:"yt_"+x.yt,title:x.title,artist:x.artist,lang:x.lang,moods:x.mood||[],yt:x.yt,art:"https://i.ytimg.com/vi/"+x.yt+"/mqdefault.jpg",src:""}});if(user&&ui.tab==="songs"&&!ui.loading)drawScreen()}).catch(function(){});
-function curated(){var q=ui.q.toLowerCase();return CUR.filter(function(s){return(ui.lang==="All"||s.lang===ui.lang)&&(!ui.mood||s.moods.indexOf(ui.mood)>-1)&&(!q||(s.title+" "+s.artist).toLowerCase().indexOf(q)>-1)})}
 /* ===== v6 ===== */
 IC.block=S('<circle cx="12" cy="12" r="9"/><path d="M5.6 5.6l12.8 12.8"/>');
 IC.flag=S('<path d="M5 21V4M5 4h11l-2 4 2 4H5"/>');
@@ -447,25 +425,10 @@ function closePop(el,yes){var it=el._it;el.classList.add("out");setTimeout(funct
 if(it.play){playList([it.play],0)}
 else if(it.mood){toast("ON IT","anu is picking a song…");getTracks("All",it.mood).then(function(l){if(l.length)playList(l,0)}).catch(function(){toast("OOPS","couldn’t reach the music service")})}
 else if(it.go){go(it.go)}}
-/* ---- full songs: ask the server for a YouTube video + synced lyrics ---- */
-var apiOK=location.protocol!=="file:",resSeq=0;
+/* ---- lyrics helpers ---- */
 function firstArtist(a){return a.split(/,|&/)[0].trim()}
-function resolveTrack(t){if(t.yt||t.tried||!apiOK)return Promise.resolve(t);
-var ctl=new AbortController(),to=setTimeout(function(){ctl.abort()},9000);
-return fetch("/api/song?title="+encodeURIComponent(cleanT(t.title))+"&artist="+encodeURIComponent(firstArtist(t.artist)),{signal:ctl.signal})
-.then(function(r){clearTimeout(to);
-if(r.status===501){apiOK=false;dbg("server has no YT_API_KEY (501). add the secret, then redeploy.");return null}
-if(r.status===404){apiOK=false;dbg("/api/song not found (404). the functions folder was not deployed.");return null}
-if(!r.ok)return r.json().then(function(j){dbg("server error "+r.status+": "+((j&&j.error)||"unknown"));return null},function(){dbg("server error "+r.status);return null});
-return r.json()})
-.then(function(d){if(d&&d.found)return Object.assign({},t,{yt:d.yt,lrcText:d.lrc||"",tried:1});if(d&&d.found===false)dbg("no embeddable video found for this song.");t.tried=1;return t})
-.catch(function(e){clearTimeout(to);apiOK=false;dbg("could not read /api/song. the functions folder is probably not deployed, or the request timed out.");return t})}
 var DBG=/[?&]debug/.test(location.search);
 function dbg(m){console.warn("anu:",m);if(DBG)toast("DEBUG",m)}
-function playList(list,i){var t=list[i];queue=list;qi=i;
-if(t.yt||t.tried||!apiOK)return playNow(list,i);
-var seq=++resSeq;toast("HOLD ON","finding the full song…");
-resolveTrack(t).then(function(u){if(seq!==resSeq)return;list[i]=u;playNow(list,i)})}
 function loadLyrics(tr){var key=tr.id;lyr={lines:[],off:0,key:key,status:"loading",k:-2};
 if(tr.lrcText){lyr.lines=parseLRC(tr.lrcText);lyr.status=lyr.lines.length?"ok":"none";drawNow();return}
 drawNow();
@@ -478,20 +441,9 @@ if(p){lyr.plain=(p.plainLyrics||p.syncedLyrics.replace(/\[[^\]]*\]/g,"")).split(
 drawNow()}).catch(function(){if(lyr.key===key){lyr.status="err";drawNow()}})}
 /* ---- listen together: shared play / pause ---- */
 function sendCtl(a){if(CH.room)CH.room.send({type:"broadcast",event:"ctl",payload:{a:a,t:curTime()}})}
-function seekLocal(t){if(cur&&cur.yt){if(YTP&&YTP.seekTo)YTP.seekTo(t,true)}else{try{audio.currentTime=t}catch(e){}}}
-function ctlLocal(a,t){if(!cur)return;CH.remote=true;
-if(a==="pause"){if(cur.yt){if(YTP)YTP.pauseVideo()}else audio.pause()}
-else{seekLocal(t);if(cur.yt){if(YTP)YTP.playVideo()}else audio.play().catch(function(){})}
-setTimeout(function(){CH.remote=false},800)}
-function toggle(){if(!cur)return;var was=isPaused();
-if(cur.yt){if(!YTP)return;was?YTP.playVideo():YTP.pauseVideo()}else{was?audio.play().catch(function(){}):audio.pause()}
-if(CH.together&&!CH.remote)sendCtl(was?"play":"pause")}
 function onSong(p){var t=p&&p.track;if(!t)return;CH.together=true;CH.remote=true;toast("TOGETHER",(CH.peer?CH.peer.name:"your match")+" picked a song for you both");playNow([t],0);setTimeout(function(){CH.remote=false},800);if(ui.tab==="people")drawScreen()}
-function shareSong(t){if(!CH.room||!t)return;closeSheet();toast("ON IT","getting it ready for you both…");
-resolveTrack(t).then(function(u){CH.together=true;var slim={id:u.id,title:u.title,artist:u.artist,art:u.art,yt:u.yt||"",src:u.src||"",lrcText:u.lrcText||"",lang:u.lang||"",tried:1};
-CH.room.send({type:"broadcast",event:"song",payload:{track:slim}});playNow([slim],0);if(ui.tab==="people")drawScreen()})}
 function pickRows(l){return l.map(function(t,i){return '<div class="row" data-share="'+i+'">'+artHTML(t)+'<div class="meta"><b>'+esc(t.title)+'</b><span>'+esc(t.artist)+'</span></div><div class="pb">'+IC.play+'</div></div>'}).join("")}
-function openSheet(){var seen={},l=[];CUR.concat(hist).forEach(function(t){if(!seen[t.id]&&l.length<10){seen[t.id]=1;l.push(t)}});CH.pickList=l;
+function openSheet(){var seen={},l=[];hist.forEach(function(t){if(!seen[t.id]&&l.length<10){seen[t.id]=1;l.push(t)}});CH.pickList=l;
 document.getElementById("sheetwrap").innerHTML='<div class="sheet2" data-sheetbg><div class="sheetbox"><h3>pick a song for you both</h3><div style="height:10px"></div><input id="sq" placeholder="search any song, press enter" autocomplete="off"><div class="list" id="sl">'+(pickRows(l)||'<p class="msg">search for a song above.</p>')+'</div><button class="link" data-sheetx>close</button></div></div>'}
 function closeSheet(){document.getElementById("sheetwrap").innerHTML=""}
 function pickSearch(q){q=q.trim();if(!q)return;var sl=document.getElementById("sl");sl.innerHTML='<p class="msg">searching…</p>';
@@ -583,7 +535,7 @@ main.innerHTML='<div class="land">'+mark("mark")+'<div class="hero"><svg class="
 document.getElementById("go").onclick=function(){user?startFlow():nameScreen()};
 var nm=document.getElementById("notme");if(nm)nm.onclick=function(){resetAll()}}
 function resetAll(){["anu_user","anu_hist2","anu_likes2","anu_pts","anu_match","anu_qseen","anu_block","anu_adult"].forEach(function(k){try{localStorage.removeItem(k)}catch(e){}});
-user=null;hist=[];likes=[];pts=0;CH.blocked=[];CH.adult=false;try{audio.pause()}catch(e){}try{if(YTP&&YTP.stopVideo)YTP.stopVideo()}catch(e){}
+user=null;hist=[];likes=[];pts=0;CH.blocked=[];CH.adult=false;try{audio.pause()}catch(e){}
 cur=null;queue=[];ui.nowOpen=false;setWrap();document.getElementById("now").innerHTML="";ui.mood=null;ui.lang="All";ui.q="";ui.list=[];ui.fresh=true;document.body.classList.remove("hasplayer","inchat");landing()}
 function fmt(x){x=Math.max(0,Math.floor(x||0));return Math.floor(x/60)+":"+("0"+(x%60)).slice(-2)}
 setInterval(function(){var a=document.getElementById("tc"),b=document.getElementById("td");if(a&&b&&cur){a.textContent=fmt(curTime());b.textContent=fmt(curDur())}},500);
@@ -600,6 +552,17 @@ if(m=t.closest("[data-fp]"))return playList(SH.fav,+m.dataset.fp);
 if(m=t.closest("[data-seek]")){var r=m.getBoundingClientRect(),d=curDur();if(d&&r.width){seekLocal((e.clientX-r.left)/r.width*d);if(CH.together&&!CH.remote)sendCtl("play")}return}
 if(t.closest("[data-signout]")){if(confirm("sign out? this clears your favorites and history on this device."))resetAll()}});
 document.addEventListener("keydown",function(e){if(e.code!=="Space"||!cur)return;var n=(e.target.tagName||"").toLowerCase();if(n==="input"||n==="textarea"||n==="button")return;e.preventDefault();toggle()});
+/* ===== audio-only engine (30s previews) ===== */
+function setWrap(){}
+function isPaused(){return audio.paused}
+function curTime(){return audio.currentTime}
+function curDur(){return audio.duration}
+function engineStart(){audio.src=cur.src;audio.play().catch(function(){})}
+function toggle(){if(!cur)return;var was=audio.paused;if(was)audio.play().catch(function(){});else audio.pause();if(CH.together&&!CH.remote)sendCtl(was?"play":"pause")}
+function playList(list,i){playNow(list,i)}
+function seekLocal(t){try{audio.currentTime=t}catch(e){}}
+function ctlLocal(a,t){if(!cur)return;CH.remote=true;if(a==="pause")audio.pause();else{seekLocal(t);audio.play().catch(function(){})}setTimeout(function(){CH.remote=false},800)}
+function shareSong(t){if(!CH.room||!t)return;closeSheet();var slim={id:t.id,title:t.title,artist:t.artist,art:t.art||"",src:t.src||"",lang:t.lang||""};CH.together=true;CH.room.send({type:"broadcast",event:"song",payload:{track:slim}});playNow([slim],0);if(ui.tab==="people")drawScreen()}
 landing();
 </script>
 </body>
