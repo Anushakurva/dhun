@@ -453,9 +453,15 @@ function firstArtist(a){return a.split(/,|&/)[0].trim()}
 function resolveTrack(t){if(t.yt||t.tried||!apiOK)return Promise.resolve(t);
 var ctl=new AbortController(),to=setTimeout(function(){ctl.abort()},9000);
 return fetch("/api/song?title="+encodeURIComponent(cleanT(t.title))+"&artist="+encodeURIComponent(firstArtist(t.artist)),{signal:ctl.signal})
-.then(function(r){clearTimeout(to);if(r.status===501||r.status===404){apiOK=false;console.warn(r.status===501?"anu: /api/song says YT_API_KEY is not set on the server.":"anu: /api/song not found. Deploy to Vercel or run vercel dev.");return null}return r.ok?r.json():null})
-.then(function(d){if(d&&d.found)return Object.assign({},t,{yt:d.yt,lrcText:d.lrc||"",tried:1});t.tried=1;return t})
-.catch(function(){clearTimeout(to);return t})}
+.then(function(r){clearTimeout(to);
+if(r.status===501){apiOK=false;dbg("server has no YT_API_KEY (501). add the secret, then redeploy.");return null}
+if(r.status===404){apiOK=false;dbg("/api/song not found (404). the functions folder was not deployed.");return null}
+if(!r.ok)return r.json().then(function(j){dbg("server error "+r.status+": "+((j&&j.error)||"unknown"));return null},function(){dbg("server error "+r.status);return null});
+return r.json()})
+.then(function(d){if(d&&d.found)return Object.assign({},t,{yt:d.yt,lrcText:d.lrc||"",tried:1});if(d&&d.found===false)dbg("no embeddable video found for this song.");t.tried=1;return t})
+.catch(function(e){clearTimeout(to);apiOK=false;dbg("could not read /api/song. the functions folder is probably not deployed, or the request timed out.");return t})}
+var DBG=/[?&]debug/.test(location.search);
+function dbg(m){console.warn("anu:",m);if(DBG)toast("DEBUG",m)}
 function playList(list,i){var t=list[i];queue=list;qi=i;
 if(t.yt||t.tried||!apiOK)return playNow(list,i);
 var seq=++resSeq;toast("HOLD ON","finding the full song…");
